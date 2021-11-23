@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("headerMeta"); %>
+    <title>Users</title>
+  </head>
+  <body>      
+    <%- include("navbar"); %>
+    <div class="container">
+      <div class="row">
+        <div class="col-6">
+          <h1>Recently Joined Users</h1>
+          <ul>
+            <% users.forEach(function(user) { %>
+            <li><%= user.userID %> 👉 <%= user.name %></li>
+            <% }); %>
+          </ul>
+        </div>
+        <div class="col-6">
+          <div class="row">
+            <h1>Register new user</h1>
+            <form action="/users" method="POST">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="username"
+                  aria-describedby="usernameHelp"
+                  name="username"
+                />
+                <div id="usernameHelp" class="form-text">
+                  Please be creative!
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+          </div>
+          <div class="row">
+            <h1>Delete user</h1>
+            <form action="/users/delete" method="POST">
+              <div class="mb-3">
+                <label for="userID" class="form-label">UserID</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="userID"
+                  aria-describedby="userIDHelp"
+                  name="userID"
+                />
+                <div id="userIDHelp" class="form-text">Please be careful!</div>
+              </div>
+              <button type="submit" class="btn btn-primary">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <h1>Most followed users</h1>
+          <ul>
+            <% mostFollowedUsers.forEach(function(user) { %>
+            <li><%= user.userID %> 👉 <%= user.name %> 🔥 has <%= user.numFollowers %> <%- user.numFollowers > 1 ? "followers" : "follower" %> </li>
+            <% }); %>
+          </ul>
+        </div>
+        <div class="col-6">
+          <h1>Follow</h1>
+          <form action="/users/follows" method="POST">
+            <div class="mb-3">
+              <label for="followerID" class="form-label">FollowerID</label>
+              <input type="number" class="form-control" id="followerID" name="followerID"/>
+              <label for="followeeID" class="form-label">FolloweeID</label>
+              <input type="number" class="form-control" id="followeeID" name="followeeID"/>
+            </div>
+            <button type="submit" class="btn btn-primary" name="follows">Follows</button>
+            <button type="submit" class="btn btn-primary" name="unfollows">Unfollows</button>
+          </form>
+          </div>
+    </div>
+  </body>
+</html>

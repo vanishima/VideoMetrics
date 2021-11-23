@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Video Performance tracking</title>
+    <%- include("headerMeta"); %>
+  </head>
+  <body>
+    <%- include("navbar"); %>
+    <div class="container">
+      <main>
+        <h1><%= v.title %> Details</h1>
+        <div class="row">
+          <div class="col-4">
+            <div>
+              <h2>Update Video</h2>
+              <form action="/videos/update" method="POST">
+                <div>
+                  <input
+                    name="videoID"
+                    type="hidden"
+                    class="form-control"
+                    value="<%= v.videoID %>"
+                  />
+                </div>
+                <div>
+                  <input
+                    name="createdTime"
+                    type="hidden"
+                    class="form-control"
+                    value="<%= v.createdTime %>"
+                  />
+                </div>
+                <div class="form-group mb-2">
+                  <label class="form-label"
+                    >Title:
+                    <input
+                      required="true"
+                      name="title"
+                      type="text"
+                      class="form-control"
+                      value="<%= v.title %>"
+                  /></label>
+                </div>
+                <div class="form-group mb-2">
+                  <label class="form-label"
+                    >Video Type:
+                    <input
+                      required="true"
+                      name="videoTypeID"
+                      type="text"
+                      class="form-control"
+                      value="<%= v.videoTypeID %>"
+                  /></label>
+                </div>
+                <div class="form-group mb-2">
+                  <label class="form-label"
+                    >Creator:
+                    <input
+                      required="true"
+                      name="creatorID"
+                      type="text"
+                      class="form-control"
+                      value="<%= v.creatorID %>"
+                  /></label>
+                </div>
+                <div class="form-group mb-2">
+                  <label class="form-label"
+                    >Length:
+                    <input
+                      required="true"
+                      name="length"
+                      type="text"
+                      class="form-control"
+                      value="<%= v.length %>"
+                  /></label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update</button>
+                <a
+                  href="<%= '/videos/' + v.videoID + '/delete' %>"
+                  type="button"
+                  class="btn btn-danger"
+                  >Delete</a
+                >
+              </form>
+            </div>
+
+            <br>
+
+            <div>
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h4 class="card-title ">Metrics</h4></a>
+                  <ul class="list-group list-group-flush">
+                    <div class="list-group-item">Views: <%= v.videoViews %></div>
+                    <div class="list-group-item">Likes: <%= v.likesCount %></div>
+                    <div class="list-group-item">Comments: <%= v.commentsCount %></div>
+                    <div class="list-group-item">Danmakus: <%= v.danmakusCount %></div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          <div class="col-4">
+            <h2>Top Comments</h2>
+            <ul class="list-group list-group-numbered">
+              <% comments.forEach(function(c) { %>
+              <li
+                class="
+                  list-group-item
+                  d-flex
+                  justify-content-between
+                  align-items-start
+                "
+              >
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold d-flex justify-content-between"><%= c.userID %> <%- c.username %>
+                    <div>
+                      <span class="badge bg-primary rounded-pill"><%= c.likes %></span>
+                      <span class="badge btn-primary rounded-pill" type="submit" onclick="updateComment(<%= c.commentID %>, {like: true})">Like </span>
+                      <span class="badge btn-primary rounded-pill" type="submit" onclick="updateComment(<%= c.commentID %>, {unlike: true})">Unlike </span>
+                    </div>
+                  </div>
+                  <%= c.content %>
+                </div>
+              </li>
+              <% }); %>
+            </ul>
+          </div>
+          <div class="col-4">
+            <h2>Danmakus</h2>
+            <div class="list-group">
+              <% danmakus.forEach(function(d) { %>
+              <a href="#" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                  <h5 class="mb-1"><%= d.userID %> <%= d.username %></h5>
+                  <small class="text-muted"><%= d.time %></small>
+                </div>
+                <p class="mb-1"><%= d.content %></p>
+              </a>
+              <% }); %>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+  <script>
+    async function updateComment(commentID, data) {
+      const response = await fetch(`/comments/${commentID}`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        redirect: 'follow',
+        body : JSON.stringify(data)
+      })
+      window.location.reload();
+    }
+  </script>
+</html>
