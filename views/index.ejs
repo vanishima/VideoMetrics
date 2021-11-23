@@ -1,11 +1,140 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+<html lang="en">
+<head>
+  <title>Video Performance tracking</title>
+  <%- include("headerMeta"); %>
+</head>
+<body>
+  <%- include("navbar"); %>
+  <div class="container">
+    <main>
+      <div class="row">
+        <div class="col-8">
+          <div class="sortDiv">
+            <div>
+              <h1>
+                <a
+                  class="page-title non-link"
+                  href="/videos"
+                  >Video List</a
+                >
+              </h1>
+              <div
+                class="btn-toolbar mb-3 row"
+                role="toolbar"
+                aria-label="Toolbar with button groups"
+              >
+                <!-- <div
+                  class="btn-group mr-2 col-auto"
+                  role="group"
+                  aria-label="Basic example"
+                >
+                  <button type="button" id="mostRecentBtn" class="btn btn-secondary">
+                    Most Recent
+                  </button>
+                  <button type="button" class="btn btn-secondary">
+                    Most Viewd
+                  </button>
+                  <button type="button" class="btn btn-secondary">
+                    Most Liked
+                  </button>
+                  <button type="button" class="btn btn-secondary">
+                    Most Commented
+                  </button>
+                </div> -->
+
+              </div>
+            </div>
+          </div>
+
+          <div id="videos">
+            <% videos.forEach(function(v) { %>
+              <div class="card mb-3">
+                <div class="card-body">
+                  <a href="/videos/<%= v.id %>" class="non-link"><h4 class="card-title "><%= v.title %></h4></a>
+                  <div class="row">
+                    <div class="col-4 right">
+                      <p class="greyText"><%= v.relative_time %></p>
+                    </div>
+                    
+                    <div class="col-auto greyText"><%= v.length %> min</div>
+                  </div>
+                  <div class="row greyText">
+                    <div class="col-2">
+                      <i class="bi bi-play-circle-fill"></i> <%= v.metrics[0].views %>
+                    </div>
+                    <div class="col-2">
+                      <i class="bi bi-hand-thumbs-up-fill"></i> <%= v.metrics[0].likes %>
+                    </div>
+                    <div class="col-2">
+                      <i class="bi bi-chat-fill"></i> <%= v.metrics[0].comments %>
+                    </div>
+                    <div class="col-auto greyText">
+                      <i class="bi bi-collection-play-fill"> </i><%= v.type %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <%})%>
+          </div>
+        </div>
+
+        <div class="col-4">
+          <h3>Create Videos</h3>
+          <form action="/videos/create" method="POST">
+            <div>
+              <div class="form-group mb-2">
+              <input
+                required="true"
+                name="id"
+                type="hidden"
+                class="form-control"
+              />
+            </div>
+            <div class="form-group mb-2">
+              <label class="form-label"
+                >Title
+                <input
+                  required="true"
+                  name="title"
+                  type="text"
+                  class="form-control"
+              /></label>
+            </div>
+            <div class="form-group mb-2">
+              <label class="form-label"
+                >Video Type
+                <input
+                  required="true"
+                  name="type"
+                  type="text"
+                  class="form-control"
+              /></label>
+            </div>
+            <div class="form-group mb-2">
+              <input
+                required="true"
+                name="user_id"
+                type="hidden"
+                class="form-control"
+                value="619c00c3f6a0af305d00067e"
+              />
+            </div>
+            <div class="form-group mb-2">
+              <label class="form-label"
+                >Length
+                <input
+                  required="true"
+                  name="length"
+                  type="number"
+                  class="form-control"
+              /></label>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+</body>
 </html>

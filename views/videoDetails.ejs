@@ -16,18 +16,18 @@
               <form action="/videos/update" method="POST">
                 <div>
                   <input
-                    name="videoID"
+                    name="id"
                     type="hidden"
                     class="form-control"
-                    value="<%= v.videoID %>"
+                    value="<%= v.id %>"
                   />
                 </div>
                 <div>
                   <input
-                    name="createdTime"
+                    name="created_time"
                     type="hidden"
                     class="form-control"
-                    value="<%= v.createdTime %>"
+                    value="<%= v.created_time %>"
                   />
                 </div>
                 <div class="form-group mb-2">
@@ -46,22 +46,29 @@
                     >Video Type:
                     <input
                       required="true"
-                      name="videoTypeID"
+                      name="type"
                       type="text"
                       class="form-control"
-                      value="<%= v.videoTypeID %>"
+                      value="<%= v.type %>"
                   /></label>
                 </div>
                 <div class="form-group mb-2">
-                  <label class="form-label"
-                    >Creator:
-                    <input
-                      required="true"
-                      name="creatorID"
-                      type="text"
-                      class="form-control"
-                      value="<%= v.creatorID %>"
-                  /></label>
+                  <input
+                    required="true"
+                    name="user_id"
+                    type="hidden"
+                    class="form-control"
+                    value="<%= v.user_id %>"
+                  />
+                </div>
+                <div class="form-group mb-2">
+                  <input
+                    required="true"
+                    name="metrics"
+                    type="hidden"
+                    class="form-control"
+                    value="<%= v.metrics %>"
+                  />
                 </div>
                 <div class="form-group mb-2">
                   <label class="form-label"
@@ -92,10 +99,9 @@
                 <div class="card-body">
                   <h4 class="card-title ">Metrics</h4></a>
                   <ul class="list-group list-group-flush">
-                    <div class="list-group-item">Views: <%= v.videoViews %></div>
-                    <div class="list-group-item">Likes: <%= v.likesCount %></div>
-                    <div class="list-group-item">Comments: <%= v.commentsCount %></div>
-                    <div class="list-group-item">Danmakus: <%= v.danmakusCount %></div>
+                    <div class="list-group-item">Views: <%= v.metrics[0].views %></div>
+                    <div class="list-group-item">Likes: <%= v.metrics[0].likes %></div>
+                    <div class="list-group-item">Comments: <%= v.metrics[0].comments %></div>
                   </ul>
                 </div>
               </div>
@@ -103,45 +109,8 @@
             
           </div>
           <div class="col-4">
-            <h2>Top Comments</h2>
-            <ul class="list-group list-group-numbered">
-              <% comments.forEach(function(c) { %>
-              <li
-                class="
-                  list-group-item
-                  d-flex
-                  justify-content-between
-                  align-items-start
-                "
-              >
-                <div class="ms-2 me-auto">
-                  <div class="fw-bold d-flex justify-content-between"><%= c.userID %> <%- c.username %>
-                    <div>
-                      <span class="badge bg-primary rounded-pill"><%= c.likes %></span>
-                      <span class="badge btn-primary rounded-pill" type="submit" onclick="updateComment(<%= c.commentID %>, {like: true})">Like </span>
-                      <span class="badge btn-primary rounded-pill" type="submit" onclick="updateComment(<%= c.commentID %>, {unlike: true})">Unlike </span>
-                    </div>
-                  </div>
-                  <%= c.content %>
-                </div>
-              </li>
-              <% }); %>
-            </ul>
-          </div>
-          <div class="col-4">
-            <h2>Danmakus</h2>
-            <div class="list-group">
-              <% danmakus.forEach(function(d) { %>
-              <a href="#" class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between">
-                  <h5 class="mb-1"><%= d.userID %> <%= d.username %></h5>
-                  <small class="text-muted"><%= d.time %></small>
-                </div>
-                <p class="mb-1"><%= d.content %></p>
-              </a>
-              <% }); %>
-            </div>
-          </div>
+
+
         </div>
       </main>
     </div>

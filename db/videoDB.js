@@ -1,13 +1,13 @@
 const { MongoClient, ObjectId } = require("mongodb");
 require("dotenv").config();
 
-function PostDB() {
+function VideoDB() {
   const myDB = {};
   const DB_NAME = "videometrics";
   const uri = process.env.MONGO_URI;
-  const COL_NAME_POST = "Video";
+  const COL_NAME_VIDEO = "Video";
 
-  myDB.findOne = async (query = {}) => {
+  myDB.getVideos = async (query = {}, orderCol = {}, limit = 20) => {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
     console.log("Connecting to the db");
 
@@ -15,102 +15,56 @@ function PostDB() {
       await client.connect();
       console.log("Connected");
 
-      // console.log(await listDatabases(client));
+      const col = client.db(DB_NAME).collection(COL_NAME_VIDEO);
+      console.log(
+        `Collection ready, query:${query}, orderCol: ${orderCol}, limit: ${limit}`
+      );
 
-      const col = client.db(DB_NAME).collection("Users");
-      console.log("Collection ready, querying:", query);
+      const result = await col
+        .find(query)
+        .sort(orderCol)
+        .limit(limit)
+        .toArray();
 
-      const user = await col.findOne(query);
-
-      return user;
+      return result;
     } finally {
       console.log("Closing the connection");
       client.close();
     }
   };
 
-  myDB.createOne = async (post) => {
+  myDB.getVideoByID = async (videoID) => {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
-    // console.log("Connecting to the db");
 
     try {
       await client.connect();
-      // console.log("Connected");
+      const col = client.db(DB_NAME).collection(COL_NAME_VIDEO);
 
-      const col = client.db(DB_NAME).collection(COL_NAME_POST);
-      // console.log("Collection ready, creating user:", user);
+      const result = await col.findOne({ id: ObjectId(videoID) });
+      console.log("result:", result);
 
-      const res = await col.insertOne(post);
-      // console.log("Inserted", res);
-
-      return res;
-    } finally {
-      // console.log("Closing the connection");
-      client.close();
-    }
-  };
-
-  myDB.getPosts = async (query) => {
-    const client = new MongoClient(uri, { useUnifiedTopology: true });
-    console.log("Connecting to the db");
-
-    try {
-      await client.connect();
-      console.log("Connected!");
-
-      const col = client.db(DB_NAME).collection(COL_NAME_POST);
-      console.log("Collection ready, querying with ", query);
-
-      const posts = await col.find(query).toArray();
-
-      return posts;
+      return result;
     } finally {
       console.log("Closing the connection");
       client.close();
     }
   };
 
-  myDB.deletePostByID = async (postID) => {
+  myDB.updateVideoByID = async (video) => {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
-    console.log("Connecting to the db");
 
     try {
       await client.connect();
-      console.log("Connected!");
 
-      const db = client.db(DB_NAME);
-      const col = db.collection(COL_NAME_POST);
-      console.log("Collection ready, deleting ", postID);
+      const VideosCol = client.db(DB_NAME).collection(COL_NAME_VIDEO);
 
-      const post = await col.deleteOne({ _id: postID });
-
-      console.log("Deleted post", post);
-
-      return post;
-    } finally {
-      console.log("Closing the connection");
-      client.close();
-    }
-  };
-
-  myDB.updatePostByID = async (post) => {
-    const client = new MongoClient(uri, { useUnifiedTopology: true });
-    console.log("Connecting to the db");
-
-    try {
-      await client.connect();
-      console.log("Connected!");
-
-      const postsCol = client.db(DB_NAME).collection(COL_NAME_POST);
-      console.log("Collection ready, update ", post);
-
-      const res = await postsCol.updateOne(
-        { _id: ObjectId(post._id) },
+      const res = await VideosCol.updateOne(
+        { _id: ObjectId(video._id) },
         {
           $set: {
-            title: post.title,
-            date: post.date,
-            content: post.content,
+            title: video.title,
+            type: video.type,
+            length: video.length,
           },
         }
       );
@@ -123,7 +77,54 @@ function PostDB() {
     }
   };
 
+  myDB.deleteVideoByID = async (videoID) => {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+
+    try {
+      await client.connect();
+
+      const col = client.db(DB_NAME).db.collection(COL_NAME_VIDEO);
+
+      const video = await col.deleteOne({ id: ObjectId(videoID) });
+
+      console.log("Deleted video", video);
+
+      return video;
+    } finally {
+      console.log("Closing the connection");
+      client.close();
+    }
+  };
+
+  myDB.createOne = async (video) => {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+
+    try {
+      await client.connect();
+
+      const col = client.db(DB_NAME).collection(COL_NAME_VIDEO);
+      video.id = new ObjectId();
+      video.length = +video.length;
+      video.user_id = ObjectId(video.user_id);
+      video.created_time = new Date();
+      video.metrics = [{
+        views: 0,
+        likes: 0,
+        comments: 0
+      }];
+
+      console.log("Ready to insert", video);
+      const res = await col.insertOne(video);
+      console.log("Inserted", res);
+
+      return res;
+    } finally {
+      // console.log("Closing the connection");
+      client.close();
+    }
+  };
+  
   return myDB;
 }
 
-module.exports = PostDB();
+module.exports = VideoDB();
