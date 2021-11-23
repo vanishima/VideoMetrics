@@ -66,6 +66,6 @@ The business rules for this database are:
 
 ## Definitions of Documents as JSON objects
 
-![JSON](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Definitions%20of%20Documents.png?raw=true)
+![JSON](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Document%20Definitions.png?raw=true)
 
 
