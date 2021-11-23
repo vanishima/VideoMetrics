@@ -40,10 +40,77 @@ function VideoDB() {
       await client.connect();
       const col = client.db(DB_NAME).collection(COL_NAME_VIDEO);
 
-      const result = await col.findOne({ id: ObjectId(videoID) });
+      // const result = await col.findOne({ id: ObjectId(videoID) });
+      const result = await col
+        .aggregate([
+          {
+            $match: {
+              id: new ObjectId(videoID),
+            },
+          },
+          {
+            $lookup: {
+              from: "Comment",
+              localField: "id",
+              foreignField: "video_id",
+              as: "comments",
+            },
+          },
+          {
+            $unwind: {
+              path: "$comments",
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: "User",
+              localField: "comments.user_id",
+              foreignField: "id",
+              as: "comments.user",
+            },
+          },
+          {
+            $unwind: {
+              path: "$comments.user",
+            },
+          },
+          {
+            $group: {
+              _id: "$_id",
+              id: {
+                $first: "$id",
+              },
+              title: {
+                $first: "$title",
+              },
+              length: {
+                $first: "$length",
+              },
+              created_time: {
+                $first: "$created_time",
+              },
+              user_id: {
+                $first: "$user_id",
+              },
+              type: {
+                $first: "$type",
+              },
+              metrics: {
+                $first: "$metrics",
+              },
+              comments: {
+                $push: "$comments",
+              },
+            },
+          },
+        ])
+        .toArray();
+
+      // { $unwind: "$comments.user" },
       console.log("result:", result);
 
-      return result;
+      return result[0];
     } finally {
       console.log("Closing the connection");
       client.close();
@@ -107,11 +174,13 @@ function VideoDB() {
       video.length = +video.length;
       video.user_id = ObjectId(video.user_id);
       video.created_time = new Date();
-      video.metrics = [{
-        views: 0,
-        likes: 0,
-        comments: 0
-      }];
+      video.metrics = [
+        {
+          views: 0,
+          likes: 0,
+          comments: 0,
+        },
+      ];
 
       console.log("Ready to insert", video);
       const res = await col.insertOne(video);
@@ -123,7 +192,7 @@ function VideoDB() {
       client.close();
     }
   };
-  
+
   return myDB;
 }
 

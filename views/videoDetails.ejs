@@ -102,6 +102,7 @@
                     <div class="list-group-item">Views: <%= v.metrics[0].views %></div>
                     <div class="list-group-item">Likes: <%= v.metrics[0].likes %></div>
                     <div class="list-group-item">Comments: <%= v.metrics[0].comments %></div>
+                    <div class="list-group-item">Created Time: <%= v.metrics[0].relative_time %></div>
                   </ul>
                 </div>
               </div>
@@ -109,23 +110,32 @@
             
           </div>
           <div class="col-4">
-
+            <h2>Top Comments</h2>
+            <ul class="list-group list-group-numbered">
+              <% v.comments.forEach(function(c) { %>
+              <li
+                class="
+                  list-group-item
+                  d-flex
+                  justify-content-between
+                  align-items-start
+                "
+              >
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold d-flex justify-content-between">
+                    <a href="/users/<%= c.user.id %>"><%= c.user.name %></a>
+                    <div>
+                      <span class="badge bg-primary rounded-pill"><%= c.likes %></span>
+                    </div>
+                  </div>
+                  <%= c.content %>
+                </div>
+              </li>
+              <% }); %>
+            </ul>
 
         </div>
       </main>
     </div>
   </body>
-  <script>
-    async function updateComment(commentID, data) {
-      const response = await fetch(`/comments/${commentID}`, {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        redirect: 'follow',
-        body : JSON.stringify(data)
-      })
-      window.location.reload();
-    }
-  </script>
 </html>
