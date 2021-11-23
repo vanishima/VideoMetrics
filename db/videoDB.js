@@ -107,7 +107,6 @@ function VideoDB() {
         ])
         .toArray();
 
-      // { $unwind: "$comments.user" },
       console.log("result:", result);
 
       return result[0];
