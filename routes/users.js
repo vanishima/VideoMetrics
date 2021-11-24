@@ -10,7 +10,7 @@ router.get("/", async function (req, res) {
 });
 
 router.post("/", async function (req, res) {
- await UserDB.createOne(req.body);
+  await UserDB.createOne(req.body);
   res.redirect("back");
 });
 
