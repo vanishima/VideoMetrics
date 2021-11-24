@@ -4,7 +4,6 @@ const { formatRelative } = require("date-fns");
 
 // import { formatRelative } from 'date-fns';
 const VideoDB = require("../db/videoDB");
-const CommentDB = require("../db/commentDB");
 
 /* GET videos list page. */
 router.get("/", async function (req, res) {
@@ -15,6 +14,7 @@ router.get("/", async function (req, res) {
   const videos = await VideoDB.getVideos(query, orderCol, limit);
   videos.forEach(addRelativeTime);
   console.log("Got videos", videos);
+  console.log("Video metrics", videos[0]);
   res.render("index", { videos });
 });
 
@@ -24,6 +24,7 @@ router.get("/:videoID", async function (req, res) {
   console.log("GET /videos/videoID", videoID);
 
   const video = await VideoDB.getVideoByID(videoID);
+  video.metrics[0].relative_time = await formatRelative(video.metrics[0].created_time, new Date());
 
   console.log("Got video", video);
   res.render("videoDetails", {
@@ -45,9 +46,8 @@ router.post("/update", async function (req, res) {
 });
 
 /* GET delete video  */
-router.get("/:videoID/delete", async function (req, res) {
+router.post("/delete/:videoID", async function (req, res) {
   console.log("GET videos/:videoID/delete");
-
   const videoID = req.params.videoID;
   console.log("GET delete", videoID);
 

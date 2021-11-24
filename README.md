@@ -58,14 +58,14 @@ The business rules for this database are:
 
 ## Conceptual Data Model - UML Diagram
 
-![UML](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20UML.png?raw=true)
+![UML](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20UML%20new.png?raw=true)
 
 ## Logical Data Model - ERD
 
-![ERD](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20ERD%20Mongo.png?raw=true)
+![ERD](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20ERD%20Mongo%20new.png?raw=true)
 
 ## Definitions of Documents as JSON objects
 
-![JSON](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Definitions%20of%20Documents.png?raw=true)
+![JSON](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Document%20Definitions.png?raw=true)
 
 
