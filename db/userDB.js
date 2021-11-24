@@ -103,12 +103,41 @@ function UserDB() {
       await client.connect();
       console.log("Connected!");
 
-      const col = client.db(DB_NAME).collection(COL_NAME_USER);
+      const follows = client.db(DB_NAME).collection("Follows");
 
-      const posts = await col
-        .aggregate([{ $sort: { numFollowers: -1 } }, { $limit: num }])
+      const posts = await follows
+        .aggregate([
+          { 
+            $unwind: "$follows"
+          },
+          {
+            $group: {
+              _id: "$follows.id",
+              followerCount: {
+                $sum: 1
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: "User",
+              localField: "_id",
+              foreignField: "id",
+              as: "users",
+            }
+          },
+          {
+            $unwind: "$users"
+          },
+          {
+            $sort: {
+              "followerCount": -1,
+            }
+          },
+          { $limit: num }
+        ])
         .toArray();
-
+      console.log("Got ", posts);
       return posts;
     } finally {
       console.log("Closing the connection");
