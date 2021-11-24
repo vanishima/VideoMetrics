@@ -70,9 +70,10 @@ The business rules for this database are:
 
 ![UML](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20UML%20new.png?raw=true)
 
-## Logical Data Model - ERD
+## Logical Data Model - ERD [View in LucidChart](https://lucid.app/lucidchart/0a996bdd-06bd-41ae-8f43-d4a2da9d520b/edit?viewport_loc=101%2C1293%2C1628%2C1355%2C0_0&invitationId=inv_0f6e5044-ef7f-42a6-813c-372d296d3f28)
 
 ![ERD](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20ERD%20Mongo%20new.png?raw=true)
+
 
 ## Definitions of Documents as JSON objects
 
