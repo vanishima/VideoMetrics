@@ -44,7 +44,7 @@ function VideoDB() {
         .aggregate([
           {
             $match: {
-              id: new ObjectId("videoID"),
+              id: ObjectId(videoID),
             },
           },
           {
