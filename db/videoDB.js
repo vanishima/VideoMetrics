@@ -39,13 +39,12 @@ function VideoDB() {
     try {
       await client.connect();
       const col = client.db(DB_NAME).collection(COL_NAME_VIDEO);
-
-      // const result = await col.findOne({ id: ObjectId(videoID) });
+      console.log("ready to query with", videoID);
       const result = await col
         .aggregate([
           {
             $match: {
-              id: new ObjectId(videoID),
+              id: new ObjectId("619d624cf6a0af3047000d3d"),
             },
           },
           {
@@ -73,6 +72,7 @@ function VideoDB() {
           {
             $unwind: {
               path: "$comments.user",
+              preserveNullAndEmptyArrays: true,
             },
           },
           {
@@ -149,8 +149,9 @@ function VideoDB() {
     try {
       await client.connect();
 
-      const col = client.db(DB_NAME).db.collection(COL_NAME_VIDEO);
+      const col = client.db(DB_NAME).collection(COL_NAME_VIDEO);
 
+      console.log("ready to delete video", videoID);
       const video = await col.deleteOne({ id: ObjectId(videoID) });
 
       console.log("Deleted video", video);
@@ -178,6 +179,7 @@ function VideoDB() {
           views: 0,
           likes: 0,
           comments: 0,
+          created_time: new Date(),
         },
       ];
 

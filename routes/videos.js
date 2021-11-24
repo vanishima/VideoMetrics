@@ -46,9 +46,8 @@ router.post("/update", async function (req, res) {
 });
 
 /* GET delete video  */
-router.get("/:videoID/delete", async function (req, res) {
+router.post("/delete/:videoID", async function (req, res) {
   console.log("GET videos/:videoID/delete");
-
   const videoID = req.params.videoID;
   console.log("GET delete", videoID);
 

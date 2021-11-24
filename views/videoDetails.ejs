@@ -82,13 +82,10 @@
                   /></label>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Update</button>
-                <a
-                  href="<%= '/videos/' + v.videoID + '/delete' %>"
-                  type="button"
-                  class="btn btn-danger"
-                  >Delete</a
-                >
+                <button type="submit" class="btn btn-primary mb-3">Update</button>
+              </form>
+              <form action="/videos/delete/<%= v.id %>" method="POST">
+                <button type="submit" class="btn btn-danger">Delete</button>
               </form>
             </div>
 
@@ -111,6 +108,8 @@
           </div>
           <div class="col-4">
             <h2>Comments</h2>
+            <% if (v.comments.user) { %>
+
             <ul class="list-group list-group-numbered">
               <% v.comments.forEach(function(c) { %>
               <li
@@ -133,7 +132,9 @@
               </li>
               <% }); %>
             </ul>
-
+            <% } else {%>
+              <div>No comments</div>
+            <% } %>
         </div>
       </main>
     </div>
