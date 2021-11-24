@@ -4,6 +4,7 @@ const { formatRelative } = require("date-fns");
 
 // import { formatRelative } from 'date-fns';
 const VideoDB = require("../db/videoDB");
+const CommentDB = require("../db/commentDB");
 
 /* GET videos list page. */
 router.get("/", async function (req, res) {
@@ -25,11 +26,19 @@ router.get("/:videoID", async function (req, res) {
 
   const video = await VideoDB.getVideoByID(videoID);
   video.metrics[0].relative_time = await formatRelative(video.metrics[0].created_time, new Date());
+  video.comments = (video.comments || []).filter(c => c.user != undefined);
 
   console.log("Got video", video);
   res.render("videoDetails", {
     v: video,
   });
+});
+
+router.post("/:videoID/comments", async function (req, res) {
+  const videoID = req.params.videoID;
+  console.log("Getting comment: ", req.body.commentContent);
+  CommentDB.createOne(req.body.commentContent, req.body.userID, videoID);
+  res.redirect("back");
 });
 
 /* POST update video details */

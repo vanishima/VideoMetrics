@@ -108,7 +108,7 @@
           </div>
           <div class="col-4">
             <h2>Comments</h2>
-            <% if (v.comments.user) { %>
+            <% if (v.comments) { %>
 
             <ul class="list-group list-group-numbered">
               <% v.comments.forEach(function(c) { %>
@@ -135,6 +135,27 @@
             <% } else {%>
               <div>No comments</div>
             <% } %>
+          </div>
+          <div class="col-4">
+            <h2>Add Comments</h2>
+            <form action="/videos/<%= v.id %>/comments/" method="POST">
+              <div class="mb-3">
+                <div class="form-group">
+                  <label for="userID" class="form-label">UserID</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="userID"
+                    aria-describedby="userIDHelp"
+                    name="userID"
+                  />
+                  <label for="commentContent">Comment</label>
+                  <textarea class="form-control" id="commentContent" name="commentContent" rows="3"></textarea>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
         </div>
       </main>
     </div>

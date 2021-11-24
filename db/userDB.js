@@ -42,6 +42,7 @@ function UserDB() {
 
       const res = await col.insertOne({
         name: user.username,
+        id: ObjectId(),
         numFollowers: 0,
       });
       console.log("Inserted", res);
@@ -127,10 +128,10 @@ function UserDB() {
       const col = db.collection(COL_NAME_USER);
       console.log("Collection ready, deleting ", userID);
 
-      const user = await col.findOne({ _id: ObjectId(userID) });
-      const res = await col.deleteOne({ _id: ObjectId(userID) });
+      const user = await col.findOne({ id: ObjectId(userID) });
+      const res = await col.deleteOne({ id: ObjectId(userID) });
       await col.updateMany(
-        { _id: { $in: user.follows } },
+        { id: { $in: user.follows } },
         { $inc: { numFollowers: -1 } }
       );
 
@@ -152,7 +153,7 @@ function UserDB() {
       const userCol = client.db(DB_NAME).collection(COL_NAME_USER);
       console.log("Collection ready, update ", query);
 
-      const res = await userCol.updateOne({ _id: ObjectId(id) }, query);
+      const res = await userCol.updateOne({ id: ObjectId(id) }, query);
       console.log("Updated", res);
 
       return res;
@@ -173,12 +174,12 @@ function UserDB() {
       const userCol = client.db(DB_NAME).collection(COL_NAME_USER);
 
       const res1 = await userCol.updateOne(
-        { _id: ObjectId(followerID) },
+        { id: ObjectId(followerID) },
         { $push: { follows: ObjectId(followeeID) } }
       );
       console.log("Updated", res1);
       const res2 = await userCol.updateOne(
-        { _id: ObjectId(followeeID) },
+        { id: ObjectId(followeeID) },
         { $inc: { numFollowers: 1 } }
       );
       console.log("Updated", res2);
@@ -199,12 +200,12 @@ function UserDB() {
       const userCol = client.db(DB_NAME).collection(COL_NAME_USER);
 
       const res1 = await userCol.updateOne(
-        { _id: ObjectId(followerID) },
+        { id: ObjectId(followerID) },
         { $pull: { follows: ObjectId(followeeID) } }
       );
       console.log("Updated", res1);
       const res2 = await userCol.updateOne(
-        { _id: ObjectId(followeeID) },
+        { id: ObjectId(followeeID) },
         { $inc: { numFollowers: -1 } }
       );
       console.log("Updated", res2);
