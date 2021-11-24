@@ -79,4 +79,13 @@ The business rules for this database are:
 
 ![JSON](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Document%20Definitions.png?raw=true)
 
+## Work Distribution
+### Shushu Chen
+1. Data population
+2. Video routes, Video CRUD
+3. Video, User aggregation
 
+### Christina Xu
+1. User routes, User CRUD
+2. Comment & Follows creation
+3. User, Follows aggregation
