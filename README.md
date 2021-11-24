@@ -10,6 +10,16 @@ A video KPI management based on Node + Express + MongodDB + EJS
 
 ## Installation
 
+### Database Initialization
+
+1. Download the JSON files from [mongo_documents](https://github.com/vanishima/VideoMetrics/tree/main/data-model/mongo_documents)
+2. Start Mongo server
+3. Import JSON files. For example, for Video Collection: `mongoimport --db videoMetrics --collection Video \
+       --authenticationDatabase admin --username <user> --password <password> \
+       --drop --file ~/Downloads/Video.json`. Replace `<user>` and `<password>` with your credentials
+
+### Node + Express App Installation
+
 1. Clone the repository
 2. `npm install`
 3. `npm start`
