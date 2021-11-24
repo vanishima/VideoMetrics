@@ -4,9 +4,9 @@ A video KPI management based on Node + Express + MongodDB + EJS
 
 ## Screenshots
 
-![Video List](https://github.com/christinaxu128/CS5200-Project-Video-Metrics/blob/main/diagrams/Videos.png?raw=true)
-![Video Details](https://github.com/christinaxu128/CS5200-Project-Video-Metrics/blob/main/diagrams/VideoDetails.png?raw=true)
-![Users & Followers](https://github.com/christinaxu128/CS5200-Project-Video-Metrics/blob/main/diagrams/Users.png?raw=true)
+![Video List](https://github.com/vanishima/VideoMetrics/blob/main/data-model/screenshots/Videos2.png?raw=true)
+![Video Details](https://github.com/vanishima/VideoMetrics/blob/main/data-model/screenshots/VideoDetails.png?raw=true)
+![Users & Followers](https://github.com/vanishima/VideoMetrics/blob/main/data-model/screenshots/Users.png?raw=true)
 
 ## Installation
 
