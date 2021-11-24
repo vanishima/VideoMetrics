@@ -77,7 +77,7 @@ The business rules for this database are:
 
 ## Definitions of Documents as JSON objects
 
-![JSON](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Document%20Definitions%20v2.png?raw=true)
+![JSON](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Definitions%20of%20Documents%20v3.png?raw=true)
 
 ## Work Distribution
 ### Shushu Chen
