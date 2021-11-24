@@ -5,7 +5,7 @@ function UserDB() {
   const myDB = {};
   const DB_NAME = "videometrics";
   const uri = process.env.MONGO_URI;
-  const COL_NAME_POST = "Video";
+  const COL_NAME_USER = "User";
 
   myDB.findOne = async (query = {}) => {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
@@ -17,7 +17,7 @@ function UserDB() {
 
       // console.log(await listDatabases(client));
 
-      const col = client.db(DB_NAME).collection("Users");
+      const col = client.db(DB_NAME).collection(COL_NAME_USER);
       console.log("Collection ready, querying:", query);
 
       const user = await col.findOne(query);
@@ -29,7 +29,7 @@ function UserDB() {
     }
   };
 
-  myDB.createOne = async (post) => {
+  myDB.createOne = async (user) => {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
     // console.log("Connecting to the db");
 
@@ -37,11 +37,14 @@ function UserDB() {
       await client.connect();
       // console.log("Connected");
 
-      const col = client.db(DB_NAME).collection(COL_NAME_POST);
+      const col = client.db(DB_NAME).collection(COL_NAME_USER);
       // console.log("Collection ready, creating user:", user);
 
-      const res = await col.insertOne(post);
-      // console.log("Inserted", res);
+      const res = await col.insertOne({
+        name: user.username,
+        numFollowers: 0,
+      });
+      console.log("Inserted", res);
 
       return res;
     } finally {
@@ -50,7 +53,7 @@ function UserDB() {
     }
   };
 
-  myDB.getPosts = async (query) => {
+  myDB.getUsers = async (query) => {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
     console.log("Connecting to the db");
 
@@ -58,7 +61,7 @@ function UserDB() {
       await client.connect();
       console.log("Connected!");
 
-      const col = client.db(DB_NAME).collection(COL_NAME_POST);
+      const col = client.db(DB_NAME).collection(COL_NAME_USER);
       console.log("Collection ready, querying with ", query);
 
       const posts = await col.find(query).toArray();
@@ -70,7 +73,49 @@ function UserDB() {
     }
   };
 
-  myDB.deletePostByID = async (postID) => {
+  myDB.sampleUsers = async (num) => {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+    console.log("Connecting to the db");
+
+    try {
+      await client.connect();
+      console.log("Connected!");
+
+      const col = client.db(DB_NAME).collection(COL_NAME_USER);
+
+      const posts = await col
+        .aggregate([{ $sort: { _id: -1 } }, { $limit: num }])
+        .toArray();
+
+      return posts;
+    } finally {
+      console.log("Closing the connection");
+      client.close();
+    }
+  };
+
+  myDB.mostFollowedUsers = async (num) => {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+    console.log("Connecting to the db");
+
+    try {
+      await client.connect();
+      console.log("Connected!");
+
+      const col = client.db(DB_NAME).collection(COL_NAME_USER);
+
+      const posts = await col
+        .aggregate([{ $sort: { numFollowers: -1 } }, { $limit: num }])
+        .toArray();
+
+      return posts;
+    } finally {
+      console.log("Closing the connection");
+      client.close();
+    }
+  };
+
+  myDB.deleteUserByID = async (userID) => {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
     console.log("Connecting to the db");
 
@@ -79,21 +124,24 @@ function UserDB() {
       console.log("Connected!");
 
       const db = client.db(DB_NAME);
-      const col = db.collection(COL_NAME_POST);
-      console.log("Collection ready, deleting ", postID);
+      const col = db.collection(COL_NAME_USER);
+      console.log("Collection ready, deleting ", userID);
 
-      const post = await col.deleteOne({ _id: postID });
+      const user = await col.findOne({ _id: ObjectId(userID) });
+      const res = await col.deleteOne({ _id: ObjectId(userID) });
+      await col.updateMany(
+        { _id: { $in: user.follows } },
+        { $inc: { numFollowers: -1 } }
+      );
 
-      console.log("Deleted post", post);
-
-      return post;
+      console.log("Deleted post", res);
     } finally {
       console.log("Closing the connection");
       client.close();
     }
   };
 
-  myDB.updatePostByID = async (post) => {
+  myDB.updateUserByID = async (id, query) => {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
     console.log("Connecting to the db");
 
@@ -101,22 +149,65 @@ function UserDB() {
       await client.connect();
       console.log("Connected!");
 
-      const postsCol = client.db(DB_NAME).collection(COL_NAME_POST);
-      console.log("Collection ready, update ", post);
+      const userCol = client.db(DB_NAME).collection(COL_NAME_USER);
+      console.log("Collection ready, update ", query);
 
-      const res = await postsCol.updateOne(
-        { _id: ObjectId(post._id) },
-        {
-          $set: {
-            title: post.title,
-            date: post.date,
-            content: post.content,
-          },
-        }
-      );
+      const res = await userCol.updateOne({ _id: ObjectId(id) }, query);
       console.log("Updated", res);
 
       return res;
+    } finally {
+      console.log("Closing the connection");
+      client.close();
+    }
+  };
+
+  myDB.follow = async (followerID, followeeID) => {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+    console.log("Connecting to the db");
+
+    try {
+      await client.connect();
+      console.log("Connected!");
+
+      const userCol = client.db(DB_NAME).collection(COL_NAME_USER);
+
+      const res1 = await userCol.updateOne(
+        { _id: ObjectId(followerID) },
+        { $push: { follows: ObjectId(followeeID) } }
+      );
+      console.log("Updated", res1);
+      const res2 = await userCol.updateOne(
+        { _id: ObjectId(followeeID) },
+        { $inc: { numFollowers: 1 } }
+      );
+      console.log("Updated", res2);
+    } finally {
+      console.log("Closing the connection");
+      client.close();
+    }
+  };
+
+  myDB.unfollow = async (followerID, followeeID) => {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+    console.log("Connecting to the db");
+
+    try {
+      await client.connect();
+      console.log("Connected!");
+
+      const userCol = client.db(DB_NAME).collection(COL_NAME_USER);
+
+      const res1 = await userCol.updateOne(
+        { _id: ObjectId(followerID) },
+        { $pull: { follows: ObjectId(followeeID) } }
+      );
+      console.log("Updated", res1);
+      const res2 = await userCol.updateOne(
+        { _id: ObjectId(followeeID) },
+        { $inc: { numFollowers: -1 } }
+      );
+      console.log("Updated", res2);
     } finally {
       console.log("Closing the connection");
       client.close();

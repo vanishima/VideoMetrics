@@ -12,7 +12,7 @@
           <h1>Recently Joined Users</h1>
           <ul>
             <% users.forEach(function(user) { %>
-            <li><%= user.userID %> 👉 <%= user.name %></li>
+            <li><%= user._id %> 👉 <%= user.name %></li>
             <% }); %>
           </ul>
         </div>
@@ -42,7 +42,7 @@
               <div class="mb-3">
                 <label for="userID" class="form-label">UserID</label>
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
                   id="userID"
                   aria-describedby="userIDHelp"
@@ -60,7 +60,7 @@
           <h1>Most followed users</h1>
           <ul>
             <% mostFollowedUsers.forEach(function(user) { %>
-            <li><%= user.userID %> 👉 <%= user.name %> 🔥 has <%= user.numFollowers %> <%- user.numFollowers > 1 ? "followers" : "follower" %> </li>
+            <li><%= user.userID %> 👉 <%= user.name %> 🔥 has <%= user.numFollowers || 0 %> <%- user.numFollowers > 1 ? "followers" : "follower" %> </li>
             <% }); %>
           </ul>
         </div>
@@ -69,9 +69,9 @@
           <form action="/users/follows" method="POST">
             <div class="mb-3">
               <label for="followerID" class="form-label">FollowerID</label>
-              <input type="number" class="form-control" id="followerID" name="followerID"/>
+              <input type="text" class="form-control" id="followerID" name="followerID"/>
               <label for="followeeID" class="form-label">FolloweeID</label>
-              <input type="number" class="form-control" id="followeeID" name="followeeID"/>
+              <input type="text" class="form-control" id="followeeID" name="followeeID"/>
             </div>
             <button type="submit" class="btn btn-primary" name="follows">Follows</button>
             <button type="submit" class="btn btn-primary" name="unfollows">Unfollows</button>
