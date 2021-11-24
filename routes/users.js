@@ -5,14 +5,7 @@ const UserDB = require("../db/userDB.js");
 /* GET users listing. */
 router.get("/", async function (req, res) {
   let users = await UserDB.sampleUsers(10);
-  let mostFollowedUsers = await UserDB.mostFollowedUsers(10);
-  mostFollowedUsers = mostFollowedUsers.map(u => {
-    return {
-      id: u.users.id,
-      name: u.users.name,
-      numFollowers: u.followerCount,
-    };
-  });
+  let mostFollowedUsers = await UserDB.mostFollowedUsers(20);
   res.render("user", { users, mostFollowedUsers });
 });
 

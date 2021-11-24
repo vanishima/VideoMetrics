@@ -107,16 +107,16 @@ function UserDB() {
 
       const posts = await follows
         .aggregate([
-          { 
-            $unwind: "$follows"
+          {
+            $unwind: "$follows",
           },
           {
             $group: {
               _id: "$follows.id",
-              followerCount: {
-                $sum: 1
-              }
-            }
+              numFollowers: {
+                $sum: 1,
+              },
+            },
           },
           {
             $lookup: {
@@ -124,17 +124,25 @@ function UserDB() {
               localField: "_id",
               foreignField: "id",
               as: "users",
-            }
+            },
           },
           {
-            $unwind: "$users"
+            $unwind: "$users",
+          },
+          {
+            $project: {
+              id: "$users.id",
+              name: "$users.name",
+              numFollowers: 1,
+            },
           },
           {
             $sort: {
-              "followerCount": -1,
-            }
+              numFollowers: -1,
+              name: 1,
+            },
           },
-          { $limit: num }
+          { $limit: num },
         ])
         .toArray();
       console.log("Got ", posts);
@@ -154,17 +162,14 @@ function UserDB() {
       console.log("Connected!");
 
       const db = client.db(DB_NAME);
-      const col = db.collection(COL_NAME_USER);
+      const userCol = db.collection(COL_NAME_USER);
+      const followsCol = db.collection("Follows");
       console.log("Collection ready, deleting ", userID);
 
-      const user = await col.findOne({ id: ObjectId(userID) });
-      const res = await col.deleteOne({ id: ObjectId(userID) });
-      await col.updateMany(
-        { id: { $in: user.follows } },
-        { $inc: { numFollowers: -1 } }
-      );
-
-      console.log("Deleted post", res);
+      await Promise.all([
+        userCol.deleteOne({ id: ObjectId(userID) }),
+        followsCol.deleteOne({ id: ObjectId(userID) }),
+      ]);
     } finally {
       console.log("Closing the connection");
       client.close();
@@ -200,18 +205,13 @@ function UserDB() {
       await client.connect();
       console.log("Connected!");
 
-      const userCol = client.db(DB_NAME).collection(COL_NAME_USER);
+      const followsCol = client.db(DB_NAME).collection("Follows");
 
-      const res1 = await userCol.updateOne(
+      await followsCol.updateOne(
         { id: ObjectId(followerID) },
-        { $push: { follows: ObjectId(followeeID) } }
+        { $addToSet: { follows: { id: ObjectId(followeeID) } } },
+        { upsert: true }
       );
-      console.log("Updated", res1);
-      const res2 = await userCol.updateOne(
-        { id: ObjectId(followeeID) },
-        { $inc: { numFollowers: 1 } }
-      );
-      console.log("Updated", res2);
     } finally {
       console.log("Closing the connection");
       client.close();
@@ -226,18 +226,12 @@ function UserDB() {
       await client.connect();
       console.log("Connected!");
 
-      const userCol = client.db(DB_NAME).collection(COL_NAME_USER);
+      const followsCol = client.db(DB_NAME).collection("Follows");
 
-      const res1 = await userCol.updateOne(
+      await followsCol.updateOne(
         { id: ObjectId(followerID) },
-        { $pull: { follows: ObjectId(followeeID) } }
+        { $pull: { follows: { id: ObjectId(followeeID) } } }
       );
-      console.log("Updated", res1);
-      const res2 = await userCol.updateOne(
-        { id: ObjectId(followeeID) },
-        { $inc: { numFollowers: -1 } }
-      );
-      console.log("Updated", res2);
     } finally {
       console.log("Closing the connection");
       client.close();
