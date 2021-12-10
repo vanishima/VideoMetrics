@@ -5,7 +5,7 @@ let router = express.Router();
 const { formatRelative } = require("date-fns");
 
 // import { formatRelative } from 'date-fns';
-const VideoDB = require("../db/videoDB");
+const VideoDB = require("../db/redisVideoDB");
 const CommentDB = require("../db/commentDB");
 
 /* GET videos list page. */
