@@ -1,6 +1,6 @@
 # VideoMetrics
 
-A video KPI management based on Node + Express + MongodDB + EJS
+A video KPI management based on Node + Express + MongodDB + EJS + Redis
 
 ## Screenshots
 
