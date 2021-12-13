@@ -27,8 +27,16 @@ a.non-link {
   line-height: 14px;
 }
 
+.verySmall{
+  font-size: 10px;
+}
+
 .greyText {
   color: #999999;
+}
+
+.bold {
+  font-weight: bold;
 }
 
 .center {

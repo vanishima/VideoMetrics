@@ -4,9 +4,9 @@ let express = require("express");
 let router = express.Router();
 const { formatRelative } = require("date-fns");
 
-// import { formatRelative } from 'date-fns';
-const VideoDB = require("../db/redisVideoDB");
+const VideoDB = require("../db/videoDB");
 const CommentDB = require("../db/commentDB");
+const RedisVideoDB = require("../db/redisVideoDB");
 
 /* GET videos list page. */
 router.get("/", async function (req, res) {
@@ -18,7 +18,11 @@ router.get("/", async function (req, res) {
   videos.forEach(addRelativeTime);
   console.log("Got videos", videos);
   console.log("Video metrics", videos[0]);
-  res.render("index", { videos });
+
+  const actions = await RedisVideoDB.getVideoActionAll();
+  actions.forEach(addTimeStr);
+
+  res.render("index", { videos, actions });
 });
 
 /* GET videos details page. */
@@ -49,11 +53,14 @@ router.post("/update", async function (req, res) {
 
   console.log("Got update video", video);
 
-  await VideoDB.updateVideoByID(video);
+  const resRw = await VideoDB.updateVideoByID(video);
+  console.log(resRw);
+  await RedisVideoDB.addVideoAction(video, "updated");
 
   console.log("Video updated");
 
-  res.render("videoDetails", { v: video });
+  res.redirect("back");
+  // res.render("videoDetails", { v: video });
 });
 
 /* GET delete video  */
@@ -61,8 +68,10 @@ router.post("/delete/:videoID", async function (req, res) {
   console.log("GET videos/:videoID/delete");
   const videoID = req.params.videoID;
   console.log("GET delete", videoID);
-
+  const video = await VideoDB.getVideoByID(videoID);
+  console.log("Got video", video);
   await VideoDB.deleteVideoByID(videoID);
+  await RedisVideoDB.addVideoAction(video, "deleted");
 
   console.log("Video deleted");
 
@@ -78,13 +87,23 @@ router.post("/create", async function (req, res) {
 
   await VideoDB.createOne(video);
 
-  console.log("Video created");
+  console.log("Video created", video);
 
   res.redirect("/");
 });
 
 function addRelativeTime(video) {
   video.relative_time = formatRelative(video.created_time, new Date());
+}
+
+function addTimeStr(action) {
+  // console.log("action.time", action.time );
+  // console.log("action.time type", typeof action.time);
+  if (action.time === undefined){
+    action.time_str = "";
+  } else {
+    action.time_str = formatRelative(new Date(parseInt(action.time)), new Date());
+  }
 }
 
 module.exports = router;

@@ -1,0 +1,11 @@
+<h3>Recent actions</h3>
+<% actions.forEach(function(action) { %>
+<div class="row">
+  <div class="col-2 verySmall"><%= action.action %></div>
+  <div class="col-7 bold">
+    <a href="/videos/<%= action.id %>"><%= action.title %></a>
+  </div>
+  <div class="col-3 greyText verySmall"><%= action.time_str %></div>
+</div>
+  
+<%})%>

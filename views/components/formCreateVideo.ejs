@@ -1,0 +1,51 @@
+<h3>Create Videos</h3>
+<form action="/videos/create" method="POST">
+<div>
+  <div class="form-group mb-2">
+  <input
+    required="true"
+    name="id"
+    type="hidden"
+    class="form-control"
+  />
+</div>
+<div class="form-group mb-2">
+  <label class="form-label"
+    >Title
+    <input
+      required="true"
+      name="title"
+      type="text"
+      class="form-control"
+  /></label>
+</div>
+<div class="form-group mb-2">
+  <label class="form-label"
+    >Video Type
+    <input
+      required="true"
+      name="type"
+      type="text"
+      class="form-control"
+  /></label>
+</div>
+<div class="form-group mb-2">
+  <input
+    required="true"
+    name="user_id"
+    type="hidden"
+    class="form-control"
+    value="619c00c3f6a0af305d00067e"
+  />
+</div>
+<div class="form-group mb-2">
+  <label class="form-label"
+    >Length
+    <input
+      required="true"
+      name="length"
+      type="number"
+      class="form-control"
+  /></label>
+</div>
+<button type="submit" class="btn btn-primary">Create</button>

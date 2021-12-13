@@ -1,6 +1,7 @@
 /* =============== Shushu Chen =============== */
 const { MongoClient, ObjectId } = require("mongodb");
 require("dotenv").config();
+const RedisVideoDB = require("../db/redisVideoDB");
 
 function VideoDB() {
   const myDB = {};
@@ -126,7 +127,7 @@ function VideoDB() {
       const VideosCol = client.db(DB_NAME).collection(COL_NAME_VIDEO);
 
       const res = await VideosCol.updateOne(
-        { _id: ObjectId(video._id) },
+        { id: ObjectId(video.id) },
         {
           $set: {
             title: video.title,
@@ -187,6 +188,7 @@ function VideoDB() {
       console.log("Ready to insert", video);
       const res = await col.insertOne(video);
       console.log("Inserted", res);
+      await RedisVideoDB.addVideoAction(video, "created");
 
       return res;
     } finally {
