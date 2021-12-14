@@ -20,13 +20,15 @@ A video KPI management based on Node + Express + MongodDB + EJS + Redis
 
 ### Redis Initialization
 
-- `redis-server /usr/local/etc/redis.conf`
+- Install Redis: `brew install redis`
+- Start Redis server: `redis-server /usr/local/etc/redis.conf`
 
 ### Node + Express App Installation
 
 1. Clone the repository
 2. `npm install`
-3. `npm start`
+3. `node load.js` to prepopulate data
+4. `npm start`
 
 ## Business Requirements & Rules
 
