@@ -40,14 +40,16 @@ function UserDB() {
       const col = client.db(DB_NAME).collection(COL_NAME_USER);
       // console.log("Collection ready, creating user:", user);
 
-      const res = await col.insertOne({
+      let insertedData = {
         name: user.username,
         id: ObjectId(),
         numFollowers: 0,
-      });
+      };
+
+      const res = await col.insertOne(insertedData);
       console.log("Inserted", res);
 
-      return res;
+      return insertedData;
     } finally {
       // console.log("Closing the connection");
       client.close();
