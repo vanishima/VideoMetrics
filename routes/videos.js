@@ -55,7 +55,6 @@ router.post("/update", async function (req, res) {
 
   const resRw = await VideoDB.updateVideoByID(video);
   console.log(resRw);
-  await RedisVideoDB.addVideoAction(video, "updated");
 
   console.log("Video updated");
 
@@ -68,10 +67,7 @@ router.post("/delete/:videoID", async function (req, res) {
   console.log("GET videos/:videoID/delete");
   const videoID = req.params.videoID;
   console.log("GET delete", videoID);
-  const video = await VideoDB.getVideoByID(videoID);
-  console.log("Got video", video);
   await VideoDB.deleteVideoByID(videoID);
-  await RedisVideoDB.addVideoAction(video, "deleted");
 
   console.log("Video deleted");
 

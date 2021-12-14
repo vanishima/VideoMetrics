@@ -127,6 +127,7 @@ function RedisVideoDB() {
       console.log("Ready to addVideoAction for " + video.title);
 
       // add action to videoEditSet set
+      console.log(time * 100 + video.length);
       await client.zAdd("videoEditSet", {score: time, value: `${video.id}`});
       console.log("Added action to videoEditSet set");
 

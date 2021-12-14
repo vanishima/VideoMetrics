@@ -136,7 +136,10 @@ function VideoDB() {
           },
         }
       );
-      console.log("Updated", res);
+      // console.log("Updated", res);
+      // console.log("ready to addVideoAction", video);
+      // console.log(video.id + " " + video.title);
+      await RedisVideoDB.addVideoAction(video, "updated");
 
       return res;
     } finally {
@@ -154,11 +157,15 @@ function VideoDB() {
       const col = client.db(DB_NAME).collection(COL_NAME_VIDEO);
 
       console.log("ready to delete video", videoID);
-      const video = await col.deleteOne({ id: ObjectId(videoID) });
 
-      console.log("Deleted video", video);
+      const video = await myDB.getVideoByID(videoID);
 
-      return video;
+      const result = await col.deleteOne({ id: ObjectId(videoID) });
+      await RedisVideoDB.addVideoAction(video, "deleted");
+
+      console.log("Deleted video", result);
+
+      return result;
     } finally {
       console.log("Closing the connection");
       client.close();
