@@ -74,12 +74,19 @@ The business rules for this database are:
 
 ## Conceptual Data Model - UML Diagram
 
-![UML](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20UML%20new.png?raw=true)
+[![UML](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20UML%20new.png?raw=true)](https://lucid.app/lucidchart/2d5716c9-d18a-418a-bf62-a1872a953df1/edit?viewport_loc=289%2C1213%2C1188%2C973%2CHWEp-vi-RSFO&invitationId=inv_79fabe24-05d5-485b-b2f0-4d5a32a6741b)
+
+**Redis**
+
+- We will implement an `addVideoAction()` function with Redis database to store information of recently edited videos
 
 ## Logical Data Model - ERD [View in LucidChart](https://lucid.app/lucidchart/0a996bdd-06bd-41ae-8f43-d4a2da9d520b/edit?viewport_loc=101%2C1293%2C1628%2C1355%2C0_0&invitationId=inv_0f6e5044-ef7f-42a6-813c-372d296d3f28)
 
-![ERD](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20ERD%20Mongo%20new.png?raw=true)
+[![ERD](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20ERD%20Mongo%20new.png?raw=true)](https://lucid.app/lucidchart/0a996bdd-06bd-41ae-8f43-d4a2da9d520b/edit?viewport_loc=101%2C1293%2C1628%2C1355%2C0_0&invitationId=inv_0f6e5044-ef7f-42a6-813c-372d296d3f28)
 
+**Redis**
+
+- To implement the recently edited videos I use a Redis **sorted set** with key `videoEditSet` to store video_ids ordered by the time they are edited. I will use video titles as the values and a score of the current time in integer format. I also use Redis **Hashes** with key `videoEdit:video_id` to store more information about each action, including video_id, time, name of action ("updated", "created", and "deleted"), and title of the video.
 
 ## Definitions of Documents as JSON objects
 
@@ -87,11 +94,9 @@ The business rules for this database are:
 
 ## Work Distribution
 ### Shushu Chen
-1. Data population
-2. Video routes, Video CRUD
-3. Video, User aggregation
+1. Recent Video Actions CRUD
+2. Dashboard of recently edited videos
 
 ### Christina Xu
-1. User routes, User CRUD
-2. Comment & Follows creation
-3. User, Follows aggregation
+1. CRUD of recently active users (follows another user, make a comment, created a video, etc.)
+2. Dashboard for recently active & popular users
