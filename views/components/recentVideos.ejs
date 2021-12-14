@@ -8,3 +8,17 @@
   <div class="col-3 greyText verySmall"><%= action.time_str %></div>
 </div>
 <%})%>
+<div class="row">
+  <div class="col-auto">
+    <form action="/videos/populateActions" method="POST">
+      <button class="btn btn-outline-success">Re-populate</button>
+    </form>
+  </div>
+  <div class="col-auto">
+    <form action="/videos/clearActions" method="POST">
+      <button id="clearActionsBtn" class="btn btn-outline-danger">Clear</button>
+    </form>
+  </div>
+</div>
+
+

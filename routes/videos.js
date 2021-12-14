@@ -62,7 +62,7 @@ router.post("/update", async function (req, res) {
   // res.render("videoDetails", { v: video });
 });
 
-/* GET delete video  */
+/* POST delete video  */
 router.post("/delete/:videoID", async function (req, res) {
   console.log("GET videos/:videoID/delete");
   const videoID = req.params.videoID;
@@ -84,6 +84,24 @@ router.post("/create", async function (req, res) {
   await VideoDB.createOne(video);
 
   console.log("Video created", video);
+
+  res.redirect("/");
+});
+
+/* POST populate actions  */
+router.post("/populateActions", async function (req, res) {
+  console.log("GET videos/populateActions");
+
+  await RedisVideoDB.populateVideoActions();
+
+  res.redirect("/");
+});
+
+/* POST delete actions  */
+router.post("/clearActions", async function (req, res) {
+  console.log("GET videos/clearActions");
+
+  await RedisVideoDB.clearActions();
 
   res.redirect("/");
 });
