@@ -74,11 +74,11 @@ The business rules for this database are:
 
 ## Conceptual Data Model - UML Diagram
 
-![UML](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20UML%20new.png?raw=true)
+[![UML](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20UML%20new.png?raw=true)](https://lucid.app/lucidchart/2d5716c9-d18a-418a-bf62-a1872a953df1/edit?viewport_loc=289%2C1213%2C1188%2C973%2CHWEp-vi-RSFO&invitationId=inv_79fabe24-05d5-485b-b2f0-4d5a32a6741b)
 
 ## Logical Data Model - ERD [View in LucidChart](https://lucid.app/lucidchart/0a996bdd-06bd-41ae-8f43-d4a2da9d520b/edit?viewport_loc=101%2C1293%2C1628%2C1355%2C0_0&invitationId=inv_0f6e5044-ef7f-42a6-813c-372d296d3f28)
 
-![ERD](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20ERD%20Mongo%20new.png?raw=true)
+[![ERD](https://github.com/vanishima/VideoMetrics/blob/main/data-model/Video%20Metrics%20ERD%20Mongo%20new.png?raw=true)](https://lucid.app/lucidchart/0a996bdd-06bd-41ae-8f43-d4a2da9d520b/edit?viewport_loc=101%2C1293%2C1628%2C1355%2C0_0&invitationId=inv_0f6e5044-ef7f-42a6-813c-372d296d3f28)
 
 
 ## Definitions of Documents as JSON objects
