@@ -35,6 +35,18 @@ function VideoDB() {
     }
   };
 
+  myDB.getVideoByIDWithoutComments = async (videoID) => {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+
+    try {
+      await client.connect();
+      const col = client.db(DB_NAME).collection(COL_NAME_VIDEO);
+      return await col.findOne({ id: ObjectId(videoID) });
+    } finally {
+      client.close();
+    }
+  };
+
   myDB.getVideoByID = async (videoID) => {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
 

@@ -97,6 +97,23 @@ function UserDB() {
     }
   };
 
+  myDB.getUser = async (userId) => {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+    console.log("Connecting to the db");
+
+    try {
+      await client.connect();
+      console.log("Connected!");
+
+      const col = client.db(DB_NAME).collection(COL_NAME_USER);
+
+      return await col.findOne({ id: ObjectId(userId) });
+    } finally {
+      console.log("Closing the connection");
+      client.close();
+    }
+  };
+
   myDB.mostFollowedUsers = async (num) => {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
     console.log("Connecting to the db");

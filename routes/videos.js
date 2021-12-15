@@ -7,6 +7,7 @@ const { formatRelative } = require("date-fns");
 const VideoDB = require("../db/videoDB");
 const CommentDB = require("../db/commentDB");
 const RedisVideoDB = require("../db/redisVideoDB");
+const RedisCommentDB = require("../db/redisCommentDB");
 
 /* GET videos list page. */
 router.get("/", async function (req, res) {
@@ -30,7 +31,22 @@ router.get("/:videoID", async function (req, res) {
   const videoID = req.params.videoID;
   console.log("GET /videos/videoID", videoID);
 
-  const video = await VideoDB.getVideoByID(videoID);
+  let video;
+  if (await RedisCommentDB.commentsExists(videoID)) {
+    const comments = await RedisCommentDB.findForVideoID(videoID);
+    console.log(`Found comments from redis: ${JSON.stringify(comments)}`);
+    video = await VideoDB.getVideoByIDWithoutComments(videoID);
+    video.comments = comments;
+  } else {
+    video = await VideoDB.getVideoByID(videoID);
+    for (const comment of video.comments) {
+      console.log(`Got comment ${JSON.stringify(comment)}`);
+      if (comment.user == undefined || comment.id == undefined) {
+        continue;
+      }
+      await RedisCommentDB.createOne(comment);
+    }
+  }
   video.metrics[0].relative_time = await formatRelative(video.metrics[0].created_time, new Date());
   video.comments = (video.comments || []).filter(c => c.user != undefined);
 
@@ -43,7 +59,8 @@ router.get("/:videoID", async function (req, res) {
 router.post("/:videoID/comments", async function (req, res) {
   const videoID = req.params.videoID;
   console.log("Getting comment: ", req.body.commentContent);
-  CommentDB.createOne(req.body.commentContent, req.body.userID, videoID);
+  let comment = await CommentDB.createOne(req.body.commentContent, req.body.userID, videoID);
+  await RedisCommentDB.createOne(comment);
   res.redirect("back");
 });
 

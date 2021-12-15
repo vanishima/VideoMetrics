@@ -38,18 +38,18 @@ function CommentDB() {
 
       const col = client.db(DB_NAME).collection(COL_NAME_COMMENT);
       // console.log("Collection ready, creating user:", user);
-
-      const res = await col.insertOne({
+      const comment = {
         id: ObjectId(),
         video_id: ObjectId(videoID),
         user_id: ObjectId(userID),
         content: content,
         created_time: new Date(),
-        numFollowers: 0,
-      });
+      } ;
+
+      const res = await col.insertOne(comment);
       console.log("Inserted", res);
 
-      return res;
+      return comment;
     } finally {
       // console.log("Closing the connection");
       client.close();
