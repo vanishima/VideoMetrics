@@ -79,6 +79,8 @@ The business rules for this database are:
 **Redis**
 
 - We will implement an `addVideoAction()` function with Redis database to store information of recently edited videos
+- We will cache comments in Redis which saves the computation for Mongodb aggreagation (with lookup) for fetching comments except for the first time.
+- We will cache recently joined users and most followed users in Redis for quick ranking without sorting in Mongodb.
 
 ## Logical Data Model - ERD [View in LucidChart](https://lucid.app/lucidchart/0a996bdd-06bd-41ae-8f43-d4a2da9d520b/edit?viewport_loc=101%2C1293%2C1628%2C1355%2C0_0&invitationId=inv_0f6e5044-ef7f-42a6-813c-372d296d3f28)
 
@@ -86,7 +88,10 @@ The business rules for this database are:
 
 **Redis**
 
-- To implement the recently edited videos I use a Redis **sorted set** with key `videoEditSet` to store video_ids ordered by the time they are edited. I will use video titles as the values and a score of the current time in integer format. I also use Redis **Hashes** with key `videoEdit:video_id` to store more information about each action, including video_id, time, name of action ("updated", "created", and "deleted"), and title of the video.
+- To implement the recently edited videos I use a Redis **sorted set** with key `videoEditSet` to store video_ids ordered by the time they are edited. I will use video titles as the values and a score of the current time in integer format. I also use Redis **Hashes** with key `videoEdit:video_id` to store more information about each action, including video_id, time, name of action ("updated", "created", and "deleted"), and title of the video. (vanishima@)
+- To implement the most recently joined users, I use a Redis **sorted set** with inserted user `id` (ObjectId)'s converted integer as the score and user ID as the value, and a Redis **hast** for shortcutting user info. At server startup, the data of most recently joined users and their user info are populated to the **sorted set** and the **hash**. (christinaxu128@).
+- To implement the top followed users, I also use a Redis **sorted set** with the number of followers as the score and the user ID as the value. Similarly I utilized the same Redis **hash** for shortcutting user info. Whenever a user follows another user, the followee's userID's score will by increased by 1 in the **sorted set** and decreased by 1 for unfollowing. (christinaxu128@).
+- To cache the comments and do comments CRUD, I use **hash** to store comments for a particular video. Only the comments of videos whose detail pages have been opened are cached. (christinaxu128@).
 
 ## Definitions of Documents as JSON objects
 
