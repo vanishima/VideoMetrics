@@ -60,7 +60,7 @@
           <h1>Most followed users</h1>
           <ul>
             <% mostFollowedUsers.forEach(function(user) { %>
-            <li><%= user.userID %> 👉 <%= user.name %> 🔥 has <%= user.numFollowers || 0 %> <%- user.numFollowers > 1 ? "followers" : "follower" %> </li>
+            <li><%= user.id %> 👉 <%= user.name %> 🔥 has <%= user.numFollowers || 0 %> <%- user.numFollowers > 1 ? "followers" : "follower" %> </li>
             <% }); %>
           </ul>
         </div>

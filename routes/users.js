@@ -7,7 +7,7 @@ const RedisUserDB = require("../db/redisUserDB.js");
 router.get("/", async function (req, res) {
   await RedisUserDB.populateOnce(UserDB, 20);
   let users = await RedisUserDB.sampleUsers(20);
-  let mostFollowedUsers = await UserDB.mostFollowedUsers(20);
+  let mostFollowedUsers = await RedisUserDB.mostFollowedUsers(20);
   res.render("user", { users, mostFollowedUsers });
 });
 
@@ -26,8 +26,10 @@ router.post("/delete", async function (req, res) {
 router.post("/follows", async function (req, res) {
   if ("follows" in req.body) {
     await UserDB.follow(req.body.followerID, req.body.followeeID);
+    await RedisUserDB.updateFollowersCount(req.body.followeeID, /*desc=*/false);
   } else if ("unfollows" in req.body) {
     await UserDB.unfollow(req.body.followerID, req.body.followeeID);
+    await RedisUserDB.updateFollowersCount(req.body.followeeID, /*desc=*/true);
   }
   res.redirect("back");
 });

@@ -51,6 +51,12 @@ function RedisUserDB() {
       score: getUniqueIntFromObjectId(userData.id),
       value: userData.id.toString(),
     });
+    if (userData.numFollowers != null) {
+      await client.zAdd("followed_rank", {
+        score: userData.numFollowers,
+        value: userData.id.toString(),
+      });
+    }
   };
 
   myDB.createOne = async (userData) => {
@@ -72,12 +78,17 @@ function RedisUserDB() {
     if (!myDB.populated) {
       let client;
       let users = await userDB.sampleUsers(num);
+      let mostFollowedUsers = await userDB.mostFollowedUsers(num);
       let promises = [];
       try {
         client = createClient();
         client.on("error", (err) => console.log("Redis Client Error", err));
         await client.connect();
         for (const user of users) {
+          promises.push(createWithClient(client, user));
+        }
+        for (const user of mostFollowedUsers) {
+          console.log(`Adding followed_rank for ${JSON.stringify(user)}`);
           promises.push(createWithClient(client, user));
         }
         await Promise.all(promises);
@@ -88,10 +99,28 @@ function RedisUserDB() {
     }
   };
 
+  myDB.updateFollowersCount = async (followeeID, desc) => {
+    let client;
+
+    try {
+      client = createClient();
+      client.zAdd;
+      client.on("error", (err) => console.log("Redis Client Error", err));
+      await client.connect();
+      console.log(
+        `${desc ? "Descreasing" : "Increasing"} followed_rank for ${followeeID}`
+      );
+      await client.zIncrBy("followed_rank", desc ? -1 : 1, followeeID);
+    } finally {
+      await client.quit();
+    }
+  };
+
   const getUserWithClient = async (client, userID) => {
     return {
       id: ObjectId(await client.hGet(`user:${userID}`, "id")),
       name: await client.hGet(`user:${userID}`, "name"),
+      numFollowers: await client.zScore("followed_rank", userID),
     };
   };
 
@@ -103,6 +132,26 @@ function RedisUserDB() {
       client.on("error", (err) => console.log("Redis Client Error", err));
       await client.connect();
       let userIds = await client.zRange("user_rank", 0, num - 1, {
+        REV: true,
+      });
+      let promises = [];
+      for (const userId of userIds) {
+        promises.push(getUserWithClient(client, userId));
+      }
+      return await Promise.all(promises);
+    } finally {
+      await client.quit();
+    }
+  };
+
+  myDB.mostFollowedUsers = async (num) => {
+    let client;
+
+    try {
+      client = createClient();
+      client.on("error", (err) => console.log("Redis Client Error", err));
+      await client.connect();
+      let userIds = await client.zRange("followed_rank", 0, num - 1, {
         REV: true,
       });
       let promises = [];
